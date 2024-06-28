@@ -9,7 +9,7 @@ app.set('view engine', 'ejs')
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.render('example', { username: 'Lucas' })
+  res.render('index')
 })
 
 app.post('/login', async (req, res) => {
