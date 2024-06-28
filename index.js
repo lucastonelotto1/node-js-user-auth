@@ -4,20 +4,32 @@ import { UserRepository } from './user-repository.js'
 
 const app = express()
 
+app.set('view engine', 'ejs')
+
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.send('<H1>Hello world!</H1>')
+  res.render('example', { username: 'Lucas' })
 })
 
-app.post('/login', (req, res) => {})
-
-app.post('/register', (req, res) => {
+app.post('/login', async (req, res) => {
   const { username, password } = req.body
   console.log(username, password)
 
   try {
-    const id = UserRepository.create({ username, password })
+    const user = await UserRepository.login({ username, password })
+    res.send({ user })
+  } catch (error) {
+    res.status(401).send({ error: error.message })
+  }
+})
+
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body
+  console.log(username, password)
+
+  try {
+    const id = await UserRepository.create({ username, password })
     res.send({ id })
   } catch (error) {
     res.status(400).send({ error: error.message })
