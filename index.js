@@ -1,6 +1,7 @@
 import express from 'express'
-import { PORT } from './config.js'
+import { PORT, SECRET_KEY } from './config.js'
 import { UserRepository } from './user-repository.js'
+import jwt from 'jsonwebtoken'
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.post('/login', async (req, res) => {
 
   try {
     const user = await UserRepository.login({ username, password })
+    const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' })
     res.send({ user })
   } catch (error) {
     res.status(401).send({ error: error.message })
@@ -38,7 +40,9 @@ app.post('/register', async (req, res) => {
 
 app.post('/logout', (req, res) => {})
 
-app.get('/protected', (req, res) => {})
+app.get('/protected', (req, res) => {
+  res.render('protected', { username: 'lutogan' })
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
